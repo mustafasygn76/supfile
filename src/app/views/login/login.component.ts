@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router } from '@angular/router';
 
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
@@ -17,7 +17,11 @@ import { AuthService } from 'app/services/auth.service';
 export class LoginComponent implements OnInit {
   private user: Observable<firebase.User>;
   private userDetails: firebase.User = null;
-  test=[];
+
+  users = {
+    email: '',
+    password: ''
+ };
 
   constructor(private _firebaseAuth: AngularFireAuth, private router: Router, private authService: AuthService ) { 
     this.user = _firebaseAuth.authState;
@@ -27,7 +31,8 @@ export class LoginComponent implements OnInit {
           this.userDetails = user;
           console.log(this.userDetails);
         }
-        else {
+        // tslint:disable-next-line:one-line
+        else{
           this.userDetails = null;
         }
       }
@@ -35,12 +40,12 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.test = ["Mustafatest","AAAA"];
+
   }
 
   signInWithGoogle() {
     this.authService.signInWithGoogle()
-    .then((res) => { 
+    .then((res) => {
         this.router.navigate(['dashboard'])
       })
     .catch((err) => console.log(err));
@@ -48,10 +53,20 @@ export class LoginComponent implements OnInit {
 
   signInWithFacebook() {
     this.authService.signInWithFacebook()
-    .then((res) => { 
+    .then((res) => {
         this.router.navigate(['dashboard'])
       })
     .catch((err) => console.log(err));
   }
+
+  signInWithEmail() {
+    this.authService.signInRegular(this.users.email, this.users.password)
+       .then((res) => {
+          console.log(res);
+
+          this.router.navigate(['dashboard']);
+       })
+       .catch((err) => console.log('error: ' + err));
+ }
 
 }
